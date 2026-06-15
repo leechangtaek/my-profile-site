@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>이창택 | 백엔드 개발자</title>
+  <meta name="description" content="이창택 백엔드 개발자 포트폴리오. Java, Spring Boot, AWS를 중심으로 확장 가능한 백엔드 시스템을 설계합니다." />
+
+  <!-- Google Fonts: Inter + Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+              600: '#475569',
+            },
+            accent: '#06b6d4',
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+          },
+          animation: {
+            'fade-up': 'fadeUp 0.6s ease forwards',
+            'fade-in': 'fadeIn 0.5s ease forwards',
+            'spin-slow': 'spin 12s linear infinite',
+          },
+          keyframes: {
+            fadeUp: {
+              '0%': { opacity: '0', transform: 'translateY(30px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Custom Styles -->
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #06b6d4, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .name-gradient {
+      background: linear-gradient(135deg, #ffffff 40%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card-glow:hover {
+      box-shadow: 0 0 24px rgba(6, 182, 212, 0.2);
+    }
+
+    .skill-pill {
+      border: 1px solid rgba(6, 182, 212, 0.3);
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .skill-pill:hover {
+      border-color: #06b6d4;
+      background: rgba(6, 182, 212, 0.1);
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    .nav-link.active {
+      color: #06b6d4;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      display: block;
+      height: 2px;
+      width: 100%;
+      background: #06b6d4;
+      border-radius: 2px;
+      margin-top: 4px;
+    }
+
+    #mobile-menu {
+      transition: max-height 0.35s ease, opacity 0.35s ease;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    #mobile-menu.open {
+      max-height: 300px;
+      opacity: 1;
+    }
+
+    .hamburger-line {
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+
+    .hamburger-line.line1 {
+      transform-origin: 50% 50%;
+    }
+
+    .hamburger-line.line2 {
+      opacity: 1;
+    }
+
+    .hamburger-line.line3 {
+      transform-origin: 50% 50%;
+    }
+
+    #hamburger.open .hamburger-line.line1 {
+      transform: rotate(45deg) translateY(8px);
+    }
+
+    #hamburger.open .hamburger-line.line2 {
+      opacity: 0;
+    }
+
+    #hamburger.open .hamburger-line.line3 {
+      transform: rotate(-45deg) translateY(-8px);
+    }
+  </style>
+</head>
+<body class="bg-navy-900 text-slate-100 font-sans antialiased">
+
+  <!-- Navigation -->
+  <nav id="navbar" class="fixed top-0 w-full z-50 bg-navy-900/80 backdrop-blur-md border-b border-navy-700/50 transition-all duration-300">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#hero" class="text-accent font-bold text-xl tracking-tight hover:text-cyan-400 transition-colors">
+        CT.
+      </a>
+
+      <!-- Desktop Navigation -->
+      <ul class="hidden md:flex gap-8 text-slate-400 text-sm font-medium">
+        <li><a href="#about" class="nav-link hover:text-accent transition-colors">About</a></li>
+        <li><a href="#skills" class="nav-link hover:text-accent transition-colors">Skills</a></li>
+        <li><a href="#projects" class="nav-link hover:text-accent transition-colors">Projects</a></li>
+        <li><a href="#contact" class="nav-link hover:text-accent transition-colors">Contact</a></li>
+      </ul>
+
+      <!-- Hamburger Button (Mobile) -->
+      <button id="hamburger" class="md:hidden flex flex-col gap-1.5 text-slate-400 hover:text-accent focus:outline-none transition-colors" aria-label="Toggle menu">
+        <span class="hamburger-line line1 block w-6 h-0.5 bg-current"></span>
+        <span class="hamburger-line line2 block w-6 h-0.5 bg-current"></span>
+        <span class="hamburger-line line3 block w-6 h-0.5 bg-current"></span>
+      </button>
+    </div>
+
+    <!-- Mobile Navigation Menu -->
+    <div id="mobile-menu" class="md:hidden bg-navy-800 border-t border-navy-700">
+      <ul class="flex flex-col py-3 gap-1 text-slate-300 text-sm font-medium px-4">
+        <li><a href="#about" class="nav-link block py-2 px-2 hover:text-accent hover:bg-navy-700 rounded transition-all">About</a></li>
+        <li><a href="#skills" class="nav-link block py-2 px-2 hover:text-accent hover:bg-navy-700 rounded transition-all">Skills</a></li>
+        <li><a href="#projects" class="nav-link block py-2 px-2 hover:text-accent hover:bg-navy-700 rounded transition-all">Projects</a></li>
+        <li><a href="#contact" class="nav-link block py-2 px-2 hover:text-accent hover:bg-navy-700 rounded transition-all">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="pt-16">
+
+    <!-- Hero Section -->
+    <section id="hero" class="flex items-center bg-navy-900 relative overflow-hidden py-12 md:py-16">
+      <!-- Background Elements -->
+      <div class="absolute top-0 right-0 w-96 h-96 md:w-[500px] md:h-[500px] rounded-full bg-gradient-to-bl from-blue-600/30 to-transparent blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-6 sm:px-8 grid md:grid-cols-2 gap-8 md:gap-16 items-center z-10 w-full">
+        <!-- Left Column: Text Content -->
+        <div class="text-left">
+          <!-- Social Icons -->
+          <div class="flex gap-3 mb-4">
+            <a href="https://linkedin.com/in/leechangtaek" target="_blank" rel="noopener"
+              class="w-9 h-9 rounded-full bg-white text-navy-900 flex items-center justify-center transition-all hover:scale-110">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.475-2.236-1.986-2.236-1.081 0-1.722.722-2.004 1.418-.103.249-.129.597-.129.946v5.441h-3.554s.05-8.807 0-9.726h3.554v1.375c.429-.662 1.196-1.602 2.905-1.602 2.121 0 3.71 1.328 3.71 4.18v5.773zM5.337 6.556a2.06 2.06 0 002.063-2.065 2.064 2.064 0 1000-4.13 2.066 2.066 0 00-2.063 2.065zm1.782 13.896h3.554V9.726H7.12v10.726zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+              </svg>
+            </a>
+            <a href="https://github.com/leechangtaek" target="_blank" rel="noopener"
+              class="w-9 h-9 rounded-full bg-white text-navy-900 flex items-center justify-center transition-all hover:scale-110">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+              </svg>
+            </a>
+            <a href="mailto:chtea1014@gmail.com"
+              class="w-9 h-9 rounded-full bg-white text-navy-900 flex items-center justify-center transition-all hover:scale-110">
+              <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </a>
+          </div>
+
+          <!-- Main Title (small) -->
+          <h2 class="text-base md:text-lg font-semibold text-slate-100 mb-0 tracking-wide">
+            백엔드 개발자
+          </h2>
+
+          <!-- Subtitle (accent) -->
+          <h3 class="text-sm md:text-base font-semibold text-accent mb-6">
+            & Java / Spring Boot
+          </h3>
+
+          <!-- Large Name -->
+          <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold leading-none tracking-tight text-slate-100 mb-5 max-w-2xl">
+            이창택
+          </h1>
+
+          <!-- Description -->
+          <p class="text-slate-400 text-sm md:text-base leading-relaxed mb-10 max-w-lg">
+            Java와 Spring Boot를 중심으로 확장 가능한 백엔드 시스템을 설계합니다. 클라우드 네이티브 환경(AWS, Docker, Kubernetes)에서의 운영 경험을 보유하고 있으며, 안정적이고 유지보수하기 쉬운 코드를 지향합니다.
+          </p>
+
+          <!-- CTA Button -->
+          <a href="#contact"
+            class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border-2 border-slate-400 text-slate-100 hover:border-accent hover:text-accent font-medium transition-all duration-300 group">
+            Let's Talk!
+            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Right Column: Profile Image with Name Overlay -->
+        <div class="relative flex justify-center items-center">
+          <!-- Blue circular background with language tags -->
+          <div class="absolute inset-0 rounded-full bg-gradient-to-br from-blue-700/40 to-blue-500/20 blur-3xl scale-90 md:scale-100 flex items-center justify-center overflow-hidden">
+            <!-- Language tags background -->
+            <div class="absolute inset-0 rounded-full flex items-center justify-center opacity-60">
+              <div class="text-center space-y-2 text-sm md:text-base">
+                <p class="text-red-400/70 font-bold tracking-tight">C++ PHP</p>
+                <p class="text-amber-400/70 font-bold tracking-tight">Java Swift Objective</p>
+                <p class="text-blue-400/70 font-bold tracking-tight">C# Go Ruby Python</p>
+                <p class="text-slate-400/70 font-bold tracking-tight">Kotlin JavaScript</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile image container -->
+          <div class="relative z-10 w-80 h-80 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl shadow-blue-600/30 border-2 border-blue-500/30">
+            <img src="https://avatars.githubusercontent.com/u/59005174"
+                 alt="이창택 프로필 사진"
+                 class="w-full h-full object-cover" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-16 bg-navy-900">
+      <div class="max-w-6xl mx-auto px-6 sm:px-8">
+        <!-- Section Label -->
+        <p class="text-accent text-sm font-semibold mb-1">More</p>
+
+        <!-- Section Heading -->
+        <h2 class="text-4xl md:text-5xl font-bold text-slate-100 mb-8">About me</h2>
+
+        <!-- Content -->
+        <div class="grid md:grid-cols-2 gap-12">
+          <!-- Text Column -->
+          <div class="space-y-5 text-slate-300 leading-relaxed text-sm md:text-base">
+            <p>
+              Java와 Spring Boot를 중심으로 확장 가능한 백엔드 시스템을 설계합니다. 클라우드 네이티브 환경(AWS, Docker, Kubernetes)에서의 운영 경험을 보유하고 있으며, 안정적이고 유지보수하기 쉬운 코드를 지향합니다.
+            </p>
+            <p>
+              데이터베이스 설계(MySQL, PostgreSQL)와 캐싱(Redis), 컨테이너 운영, AWS 클라우드 인프라 구성까지 백엔드 전반의 역할을 수행합니다. 새로운 기술을 빠르게 습득하는 것을 즐기며, 팀과의 원활한 소통과 코드 품질에 높은 가치를 두고 있습니다.
+            </p>
+
+            <!-- CTA Button -->
+            <div class="pt-4">
+              <a href="#contact"
+                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border-2 border-slate-400 text-slate-100 hover:border-accent hover:text-accent font-medium transition-all duration-300 group">
+                Let's Talk!
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <!-- Empty Column (for layout) -->
+          <div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section id="skills" class="py-24 bg-navy-900 hidden">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <!-- Section Heading -->
+        <div class="text-center mb-16 reveal" data-delay="0">
+          <span class="text-accent text-sm font-semibold uppercase tracking-widest">Technical Skills</span>
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-100 mt-3">기술 스택</h2>
+          <div class="mt-4 mx-auto w-16 h-1 rounded-full bg-accent"></div>
+        </div>
+
+        <div class="space-y-12">
+          <!-- Languages -->
+          <div class="reveal" data-delay="100">
+            <h3 class="text-accent text-sm font-semibold uppercase tracking-widest mb-5">Languages</h3>
+            <div class="flex flex-wrap gap-3">
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">☕</span>Java
+              </div>
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">🐍</span>Python
+              </div>
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">📦</span>Node.js
+              </div>
+            </div>
+          </div>
+
+          <!-- Frameworks -->
+          <div class="reveal" data-delay="150">
+            <h3 class="text-accent text-sm font-semibold uppercase tracking-widest mb-5">Frameworks</h3>
+            <div class="flex flex-wrap gap-3">
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">🍃</span>Spring Boot
+              </div>
+            </div>
+          </div>
+
+          <!-- Databases -->
+          <div class="reveal" data-delay="200">
+            <h3 class="text-accent text-sm font-semibold uppercase tracking-widest mb-5">Databases & Cache</h3>
+            <div class="flex flex-wrap gap-3">
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">🗄️</span>MySQL
+              </div>
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">🗄️</span>PostgreSQL
+              </div>
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">⚡</span>Redis
+              </div>
+            </div>
+          </div>
+
+          <!-- Infrastructure -->
+          <div class="reveal" data-delay="250">
+            <h3 class="text-accent text-sm font-semibold uppercase tracking-widest mb-5">Infrastructure & DevOps</h3>
+            <div class="flex flex-wrap gap-3">
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">🐳</span>Docker
+              </div>
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">☸️</span>Kubernetes
+              </div>
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">☁️</span>AWS
+              </div>
+              <div class="skill-pill flex items-center gap-2 px-4 py-2 rounded-lg bg-navy-800 text-slate-200 text-sm font-medium cursor-default">
+                <span class="text-base">🔗</span>Git
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section id="projects" class="py-16 bg-navy-900">
+      <div class="max-w-6xl mx-auto px-6 sm:px-8">
+        <!-- Section Label -->
+        <p class="text-accent text-sm font-semibold mb-1">My Last</p>
+
+        <!-- Section Heading -->
+        <h2 class="text-4xl md:text-5xl font-bold text-slate-100 mb-8">Projects</h2>
+
+        <!-- Projects Grid -->
+        <div class="space-y-6">
+          <!-- Project 1 -->
+          <article class="group flex flex-col md:flex-row gap-6 p-6 rounded-lg bg-navy-800/50 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-300 hover:bg-navy-800/80 hover:shadow-lg hover:shadow-blue-500/10">
+            <!-- Project Image/Placeholder -->
+            <div class="md:w-40 md:h-40 flex-shrink-0 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center overflow-hidden">
+              <div class="w-full h-full bg-slate-800 flex items-center justify-center text-4xl">📦</div>
+            </div>
+
+            <!-- Project Content -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-100 mb-2">쇼핑몰 백엔드 API</h3>
+                <p class="text-slate-400 text-sm leading-relaxed mb-3">
+                  Spring Boot + JPA 기반 RESTful API 서버. JWT 인증, 상품/주문/결제 도메인 구현.
+                </p>
+              </div>
+              <!-- Status Badge -->
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1 rounded-full bg-emerald-900/40 text-emerald-300 text-xs font-medium border border-emerald-500/30">완료</span>
+              </div>
+            </div>
+
+            <!-- More Link -->
+            <div class="md:flex items-center justify-end">
+              <a href="#"
+                class="inline-flex items-center gap-2 text-slate-300 hover:text-accent text-sm font-medium transition-colors">
+                Know more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Project 2 -->
+          <article class="group flex flex-col md:flex-row gap-6 p-6 rounded-lg bg-navy-800/50 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-300 hover:bg-navy-800/80 hover:shadow-lg hover:shadow-blue-500/10">
+            <!-- Project Image/Placeholder -->
+            <div class="md:w-40 md:h-40 flex-shrink-0 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center overflow-hidden">
+              <div class="w-full h-full bg-slate-800 flex items-center justify-center text-4xl">💬</div>
+            </div>
+
+            <!-- Project Content -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-100 mb-2">실시간 채팅 서비스</h3>
+                <p class="text-slate-400 text-sm leading-relaxed mb-3">
+                  WebSocket과 Redis Pub/Sub을 활용한 실시간 채팅 서버. 수평 확장 가능한 구조 설계.
+                </p>
+              </div>
+              <!-- Status Badge -->
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1 rounded-full bg-emerald-900/40 text-emerald-300 text-xs font-medium border border-emerald-500/30">완료</span>
+              </div>
+            </div>
+
+            <!-- More Link -->
+            <div class="md:flex items-center justify-end">
+              <a href="#"
+                class="inline-flex items-center gap-2 text-slate-300 hover:text-accent text-sm font-medium transition-colors">
+                Know more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <!-- Project 3 -->
+          <article class="group flex flex-col md:flex-row gap-6 p-6 rounded-lg bg-navy-800/50 border border-blue-500/30 hover:border-blue-500/60 transition-all duration-300 hover:bg-navy-800/80 hover:shadow-lg hover:shadow-blue-500/10">
+            <!-- Project Image/Placeholder -->
+            <div class="md:w-40 md:h-40 flex-shrink-0 rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center overflow-hidden">
+              <div class="w-full h-full bg-slate-800 flex items-center justify-center text-4xl">⚙️</div>
+            </div>
+
+            <!-- Project Content -->
+            <div class="flex-1 flex flex-col justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-100 mb-2">데이터 파이프라인 자동화</h3>
+                <p class="text-slate-400 text-sm leading-relaxed mb-3">
+                  Python 기반 ETL 파이프라인. AWS S3, RDS 연동 및 Kubernetes CronJob으로 스케줄링.
+                </p>
+              </div>
+              <!-- Status Badge -->
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1 rounded-full bg-emerald-900/40 text-emerald-300 text-xs font-medium border border-emerald-500/30">완료</span>
+              </div>
+            </div>
+
+            <!-- More Link -->
+            <div class="md:flex items-center justify-end">
+              <a href="#"
+                class="inline-flex items-center gap-2 text-slate-300 hover:text-accent text-sm font-medium transition-colors">
+                Know more
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+              </a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-navy-900">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center">
+        <!-- Section Heading -->
+        <div class="reveal mb-12" data-delay="0">
+          <span class="text-accent text-sm font-semibold uppercase tracking-widest">Get In Touch</span>
+          <h2 class="text-3xl md:text-4xl font-bold text-slate-100 mt-3">연락하기</h2>
+          <div class="mt-4 mx-auto w-16 h-1 rounded-full bg-accent"></div>
+        </div>
+
+        <p class="reveal text-slate-400 text-lg mb-12 leading-relaxed" data-delay="100">
+          새로운 기회나 협업 제안이 있으시면 언제든지 연락 주세요.<br class="hidden sm:block" />
+          가능한 빠르게 답변 드리겠습니다.
+        </p>
+
+        <!-- Contact Cards -->
+        <div class="reveal grid sm:grid-cols-2 gap-6" data-delay="200">
+          <!-- Email Card -->
+          <a href="mailto:chtea1014@gmail.com"
+            class="card-glow group flex flex-col items-center gap-3 p-8 rounded-xl bg-navy-800 border border-navy-700 hover:border-accent transition-all duration-300 hover:-translate-y-2">
+            <div class="text-accent text-5xl group-hover:scale-110 transition-transform">✉️</div>
+            <p class="text-slate-200 font-medium text-lg">Email</p>
+            <p class="text-slate-400 text-sm break-all hover:text-accent transition-colors">chtea1014@gmail.com</p>
+          </a>
+
+          <!-- GitHub Card -->
+          <a href="https://github.com/leechangtaek" target="_blank" rel="noopener"
+            class="card-glow group flex flex-col items-center gap-3 p-8 rounded-xl bg-navy-800 border border-navy-700 hover:border-accent transition-all duration-300 hover:-translate-y-2">
+            <div class="text-accent text-5xl group-hover:scale-110 transition-transform">🔗</div>
+            <p class="text-slate-200 font-medium text-lg">GitHub</p>
+            <p class="text-slate-400 text-sm hover:text-accent transition-colors">github.com/leechangtaek</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-6 bg-navy-900 border-t border-navy-800 text-center text-slate-600 text-sm">
+    <p>© <span id="year">2026</span> 이창택. Built with Tailwind CSS.</p>
+  </footer>
+
+  <!-- JavaScript -->
+  <script>
+    // Update year in footer
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Mobile Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Close mobile menu when a link is clicked
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('bg-navy-900', 'shadow-lg', 'shadow-black/30');
+        navbar.classList.remove('bg-navy-900/80');
+      } else {
+        navbar.classList.remove('bg-navy-900', 'shadow-lg', 'shadow-black/30');
+        navbar.classList.add('bg-navy-900/80');
+      }
+    });
+
+    // Active nav link highlight
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    const sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            navLinks.forEach(link => link.classList.remove('active'));
+            const id = entry.target.getAttribute('id');
+            const activeLink = document.querySelector(`.nav-link[href="#${id}"]`);
+            if (activeLink) activeLink.classList.add('active');
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    sections.forEach(section => sectionObserver.observe(section));
+
+    // Scroll reveal animations
+    const reveals = document.querySelectorAll('.reveal');
+
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const delay = parseInt(entry.target.dataset.delay) || 0;
+            setTimeout(() => {
+              entry.target.classList.add('visible');
+            }, delay);
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    reveals.forEach(el => revealObserver.observe(el));
+  </script>
+</body>
+</html>
